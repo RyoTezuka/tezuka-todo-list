@@ -1,34 +1,15 @@
 import 'package:flutter/material.dart';
-
 import 'package:todo_management/todo_view.dart';
-import 'package:todo_management/user_registration.dart';
 
-void main() => runApp(const TODOManagementApp());
-
-class TODOManagementApp extends StatelessWidget {
-  const TODOManagementApp({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'TODO Management',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const TODOLogin(title: 'TODO管理\nログイン'),
-    );
-  }
-}
-
-class TODOLogin extends StatefulWidget {
-  const TODOLogin({Key? key, required this.title}) : super(key: key);
+class UserRegistration extends StatefulWidget {
+  const UserRegistration({Key? key, required this.title}) : super(key: key);
   final String title;
 
   @override
-  State<TODOLogin> createState() => _TODOLoginState();
+  State<UserRegistration> createState() => _UserRegistrationState();
 }
 
-class _TODOLoginState extends State<TODOLogin> {
+class _UserRegistrationState extends State<UserRegistration> {
   String _text = '';
 
   void _handleText(String e) {
@@ -53,7 +34,7 @@ class _TODOLoginState extends State<TODOLogin> {
                 const SizedBox(
                   height: 50,
                   child: Text(
-                    '※ユーザー名かパスワードが間違っています。',
+                    '※そのユーザーは既に存在しています。',
                     style: TextStyle(
                       color: Colors.red,
                     ),
@@ -97,38 +78,13 @@ class _TODOLoginState extends State<TODOLogin> {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) => const TODOList(
-                            title: 'TODO管理\nTODO一覧',
+                            title: 'TODO管理',
                           ),
                         ),
                       );
                     },
                     child: const Text(
-                      'ログイン',
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  height: 30,
-                ),
-                const Text(
-                  'まだユーザー登録していない方はコチラ',
-                ),
-                SizedBox(
-                  // 「ユーザー新規登録」ボタン
-                  width: 200,
-                  height: 40,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => const UserRegistration(
-                            title: 'TODO管理\nユーザー登録',
-                          ),
-                        ),
-                      );
-                    },
-                    child: const Text(
-                      'ユーザー新規登録',
+                      'ユーザー登録',
                     ),
                   ),
                 ),
