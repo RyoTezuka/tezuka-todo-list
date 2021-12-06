@@ -61,8 +61,16 @@ class AuthenticateInProgressState extends LoginScreenState {
 }
 
 class AuthenticateSuccessState extends LoginScreenState {
+  final String result;
+
+  const AuthenticateSuccessState({
+    required this.result,
+  });
+
   @override
-  List<Object> get props => [];
+  List<Object> get props => [
+        result,
+      ];
 
   @override
   String toString() => '認証成功後';

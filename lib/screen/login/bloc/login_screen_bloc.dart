@@ -1,15 +1,20 @@
 import 'package:bloc/bloc.dart';
+import 'package:todo_management/repository/auth_repository.dart';
 import 'package:todo_management/screen/login/bloc/login_screen.dart';
 
 class LoginScreenBloc extends Bloc {
-  LoginScreenBloc()
-      : super(
+  AuthRepository authRepository;
+
+  LoginScreenBloc({
+    required this.authRepository,
+  }) : super(
           InitialState(),
         );
 
   @override
   String toString() => 'ログイン画面';
 
+  @override
   Stream mapEventToState(event) async* {
     // 初期化要求
     if (event is OnRequestedInitializeEvent) {
@@ -39,10 +44,20 @@ class LoginScreenBloc extends Bloc {
       yield AuthenticateInProgressState();
 
       try {
-        // TODO 認証処理
-        await Future.delayed(const Duration(seconds: 2));
-
-        yield AuthenticateSuccessState();
+        final result = await authRepository.login(
+          email: event.name,
+          password: event.password,
+        );
+        if (result == "unexpected_error") {
+          throw Error();
+        } else if (result == "invalid_name") {
+          throw Error();
+        } else if (result == "user_disabled") {
+          throw Error();
+        }
+        yield AuthenticateSuccessState(
+          result: result,
+        );
       } catch (e, s) {
         print(e);
         print(s);

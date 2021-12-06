@@ -10,4 +10,4 @@ class FirebaseAuthDataProvider {
       password: password,
     );
   }
-}
+
