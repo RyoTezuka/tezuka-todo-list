@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
-import 'package:todo_management/todo_view.dart';
-import 'package:todo_management/user_registration.dart';
+import 'package:todo_management/screen/list/todo_list.dart';
+import 'package:todo_management/screen/login/bloc/login_screen.dart';
+import 'package:todo_management/screen/login/bloc/login_screen_bloc.dart';
+import 'package:todo_management/screen/registration/user_registration.dart';
 
-void main() => runApp(const TODOManagementApp());
+// void main() => runApp(const TODOManagementApp());
 
 class TODOManagementApp extends StatelessWidget {
   const TODOManagementApp({Key? key}) : super(key: key);
@@ -15,20 +17,20 @@ class TODOManagementApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const TODOLogin(title: 'TODO管理\nログイン'),
+      home: const LoginScreenPage(title: 'TODO管理\nログイン'),
     );
   }
 }
 
-class TODOLogin extends StatefulWidget {
-  const TODOLogin({Key? key, required this.title}) : super(key: key);
+class LoginScreenPage extends StatefulWidget {
+  const LoginScreenPage({Key? key, required this.title}) : super(key: key);
   final String title;
 
   @override
-  State<TODOLogin> createState() => _TODOLoginState();
+  State<LoginScreenPage> createState() => _LoginScreenPageState();
 }
 
-class _TODOLoginState extends State<TODOLogin> {
+class _LoginScreenPageState extends State<LoginScreenPage> {
   String _text = '';
 
   void _handleText(String e) {
@@ -37,8 +39,21 @@ class _TODOLoginState extends State<TODOLogin> {
     });
   }
 
+  late LoginScreenBloc _bloc;
+
+  @override
+  void initState() {
+    _bloc = LoginScreenBloc();
+
+    _bloc.add(
+      const OnRequestedAuthenticateEvent(name: '', password: ''),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    // return BlocConsumer();
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
