@@ -5,9 +5,20 @@ class FirebaseAuthDataProvider {
     required String email,
     required String password,
   }) async {
+    print(FirebaseAuth.instance.currentUser);
     return await FirebaseAuth.instance.signInWithEmailAndPassword(
       email: email,
       password: password,
     );
   }
 
+  Future<UserCredential> createUserWithEmailAndPassword({
+    required String email,
+    required String password,
+  }) async {
+    return await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+  }
+}

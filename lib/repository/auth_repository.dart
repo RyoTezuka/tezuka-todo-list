@@ -1,5 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:todo_management/data_provider/firebase_auth_data_provider.dart';
 
 class AuthRepository {

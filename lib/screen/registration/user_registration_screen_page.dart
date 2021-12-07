@@ -3,21 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todo_management/data_provider/firebase_auth_data_provider.dart';
 import 'package:todo_management/repository/auth_repository.dart';
-import 'package:todo_management/screen/list/todo_list.dart';
+import 'package:todo_management/screen/list/todo_list_screen_page.dart';
+import 'package:todo_management/screen/registration/bloc/user_registration_screen.dart';
 
-import 'package:todo_management/screen/login/bloc/login_screen.dart';
-import 'package:todo_management/screen/login/bloc/login_screen_bloc.dart';
-import 'package:todo_management/screen/registration/user_registration.dart';
-
-class LoginScreenPage extends StatefulWidget {
-  const LoginScreenPage({Key? key, required this.title}) : super(key: key);
+class UserRegistration extends StatefulWidget {
+  const UserRegistration({Key? key, required this.title}) : super(key: key);
   final String title;
 
   @override
-  State<LoginScreenPage> createState() => _LoginScreenPageState();
+  State<UserRegistration> createState() => _UserRegistrationState();
 }
 
-class _LoginScreenPageState extends State<LoginScreenPage> {
+class _UserRegistrationState extends State<UserRegistration> {
   String _text = '';
   String _name = '';
 
@@ -32,7 +29,7 @@ class _LoginScreenPageState extends State<LoginScreenPage> {
 
   late FirebaseAuthDataProvider _firebaseAuthDataProvider;
   late AuthRepository _authRepository;
-  late LoginScreenBloc _bloc;
+  late RegistrationScreenBloc _bloc;
 
   late String _errortext;
 
@@ -54,7 +51,7 @@ class _LoginScreenPageState extends State<LoginScreenPage> {
     _authRepository = AuthRepository(
       firebaseAuthDataProvider: _firebaseAuthDataProvider,
     );
-    _bloc = LoginScreenBloc(
+    _bloc = RegistrationScreenBloc(
       authRepository: _authRepository,
     );
 
@@ -63,7 +60,9 @@ class _LoginScreenPageState extends State<LoginScreenPage> {
     );
 
     _errortext = '';
-    fetchName().then((value) => _name = value);
+    fetchName().then(
+      (value) => _name = value,
+    );
     print(_name);
   }
 
@@ -77,8 +76,10 @@ class _LoginScreenPageState extends State<LoginScreenPage> {
           _bloc.add(
             OnCompletedRenderEvent(),
           );
-          // 認証中
-        } else if (state is AuthenticateInProgressState) {
+        }
+
+        // 認証中
+        else if (state is CreateUserInProgressState) {
           // ページ中央でクルクルするダイアログ
           showGeneralDialog(
             context: context,
@@ -91,21 +92,23 @@ class _LoginScreenPageState extends State<LoginScreenPage> {
               );
             },
           );
-          //  認証成功後
-        } else if (state is AuthenticateSuccessState) {
+        }
+
+        //  ユーザー登録成功後
+        else if (state is CreateUserSuccessState) {
           await Future.delayed(const Duration(seconds: 3));
 
           // ログイン試行結果を取得
-          const hasSuccessedLogin = true;
+          var hasSuccessedLogin = state.result;
 
-          if (hasSuccessedLogin == true) {
+          if (hasSuccessedLogin == 'success') {
             // ローディングダイアログを閉じる
             Navigator.of(context).pop();
 
             // TODO一覧画面へ遷移する
             Navigator.of(context).push(
               MaterialPageRoute(
-                builder: (context) => const TODOList(
+                builder: (context) => const TodoList(
                   title: 'TODO監理\nTODO一覧',
                 ),
               ),
@@ -120,10 +123,17 @@ class _LoginScreenPageState extends State<LoginScreenPage> {
               OnCompletedRenderEvent(),
             );
           }
-          // ログイン試行失敗後
-        } else if (state is AuthenticateFailureState) {
+        }
+        // ログイン試行失敗後
+        else if (state is CreateUserFailureState) {
           // エラーメッセージ
-          _errortext = "※ユーザー名かパスワードが間違っています。";
+          if (state.error.message == "The password provided is too weak.") {
+            _errortext = "※パスワードが短か過ぎます。";
+          } else if (state.error.message == "The account already exists for that email.") {
+            _errortext = "※そのユーザーはすでに存在します。";
+          } else {
+            _errortext = "※エラーが発生しました。";
+          }
 
           // ローディングダイアログを閉じる
           Navigator.of(context).pop();
@@ -193,7 +203,7 @@ class _LoginScreenPageState extends State<LoginScreenPage> {
                         onPressed: () {
                           // イベント発火
                           _bloc.add(
-                            OnRequestedAuthenticateEvent(
+                            OnCreateUserEvent(
                               name: _nameTextEditingController.text,
                               password: _passwordTextEditingController.text,
                             ),
@@ -201,31 +211,6 @@ class _LoginScreenPageState extends State<LoginScreenPage> {
                         },
                         child: const Text(
                           'ログイン',
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 30,
-                    ),
-                    const Text(
-                      'まだユーザー登録していない方はコチラ',
-                    ),
-                    SizedBox(
-                      // 「ユーザー新規登録」ボタン
-                      width: 200,
-                      height: 40,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => const UserRegistration(
-                                title: 'TODO管理\nユーザー登録',
-                              ),
-                            ),
-                          );
-                        },
-                        child: const Text(
-                          'ユーザー新規登録',
                         ),
                       ),
                     ),
