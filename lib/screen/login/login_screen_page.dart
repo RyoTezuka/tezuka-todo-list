@@ -4,7 +4,6 @@ import 'package:todo_management/data_provider/firebase_auth_data_provider.dart';
 import 'package:todo_management/repository/auth_repository.dart';
 import 'package:todo_management/screen/list/todo_list_screen_page.dart';
 import 'package:todo_management/screen/login/bloc/login_screen.dart';
-import 'package:todo_management/screen/login/bloc/login_screen_bloc.dart';
 import 'package:todo_management/screen/registration/user_registration_screen_page.dart';
 
 class LoginScreenPage extends StatefulWidget {
@@ -16,14 +15,6 @@ class LoginScreenPage extends StatefulWidget {
 }
 
 class _LoginScreenPageState extends State<LoginScreenPage> {
-  String _text = '';
-
-  void _handleText(String e) {
-    setState(() {
-      _text = e;
-    });
-  }
-
   late TextEditingController _nameTextEditingController;
   late TextEditingController _passwordTextEditingController;
 
@@ -95,8 +86,9 @@ class _LoginScreenPageState extends State<LoginScreenPage> {
             // TODO一覧画面へ遷移する
             Navigator.of(context).push(
               MaterialPageRoute(
-                builder: (context) => const TodoList(
+                builder: (context) => TodoListScreenPage(
                   title: 'TODO監理\nTODO一覧',
+                  name: _nameTextEditingController.text,
                 ),
               ),
             );
@@ -157,7 +149,7 @@ class _LoginScreenPageState extends State<LoginScreenPage> {
                       obscureText: false,
                       maxLines: 1,
                       //パスワード
-                      onChanged: _handleText,
+                      // onChanged: _handleText,
                       decoration: const InputDecoration(
                         hintText: '海馬　太郎',
                       ),
@@ -174,7 +166,7 @@ class _LoginScreenPageState extends State<LoginScreenPage> {
                       obscureText: true,
                       maxLines: 1,
                       //パスワード
-                      onChanged: _handleText,
+                      // onChanged: _handleText,
                     ),
                     SizedBox(
                       // 「ログイン」ボタン
@@ -209,7 +201,7 @@ class _LoginScreenPageState extends State<LoginScreenPage> {
                         onPressed: () {
                           Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (context) => const UserRegistration(
+                              builder: (context) => const UserRegistrationScreenPage(
                                 title: 'TODO管理\nユーザー登録',
                               ),
                             ),

@@ -20,11 +20,11 @@ class OnCompletedRenderEvent extends RegistrationScreenEvent {
   String toString() => '描画完了';
 }
 
-class OnCreateUserEvent extends RegistrationScreenEvent {
+class OnRequestedCreateUserEvent extends RegistrationScreenEvent {
   final String name;
   final String password;
 
-  const OnCreateUserEvent({
+  const OnRequestedCreateUserEvent({
     required this.name,
     required this.password,
   });

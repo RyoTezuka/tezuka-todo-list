@@ -1,44 +1,31 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todo_management/data_provider/firebase_auth_data_provider.dart';
+import 'package:todo_management/data_provider/firebase_todo_data_provider.dart';
 import 'package:todo_management/repository/auth_repository.dart';
+import 'package:todo_management/repository/todo_repository.dart';
 import 'package:todo_management/screen/list/todo_list_screen_page.dart';
 import 'package:todo_management/screen/registration/bloc/user_registration_screen.dart';
 
-class UserRegistration extends StatefulWidget {
-  const UserRegistration({Key? key, required this.title}) : super(key: key);
+class UserRegistrationScreenPage extends StatefulWidget {
+  const UserRegistrationScreenPage({Key? key, required this.title}) : super(key: key);
   final String title;
 
   @override
-  State<UserRegistration> createState() => _UserRegistrationState();
+  State<UserRegistrationScreenPage> createState() => _UserRegistrationScreenPageState();
 }
 
-class _UserRegistrationState extends State<UserRegistration> {
-  String _text = '';
-  String _name = '';
-
-  void _handleText(String e) {
-    setState(() {
-      _text = e;
-    });
-  }
-
+class _UserRegistrationScreenPageState extends State<UserRegistrationScreenPage> {
   late TextEditingController _nameTextEditingController;
   late TextEditingController _passwordTextEditingController;
 
   late FirebaseAuthDataProvider _firebaseAuthDataProvider;
+  late FirebaseTodoDataProvider _firebaseTodoDataProvider;
   late AuthRepository _authRepository;
+  late TodoRepository _todoRepository;
   late RegistrationScreenBloc _bloc;
 
   late String _errortext;
-
-  Future<String> fetchName() async {
-    final snapshot = await FirebaseFirestore.instance.collection('user_collection').get();
-    final name = snapshot.docs.first.data()['name'];
-    print(name);
-    return name;
-  }
 
   @override
   void initState() {
@@ -51,8 +38,15 @@ class _UserRegistrationState extends State<UserRegistration> {
     _authRepository = AuthRepository(
       firebaseAuthDataProvider: _firebaseAuthDataProvider,
     );
+    _firebaseTodoDataProvider = FirebaseTodoDataProvider();
+    _todoRepository = TodoRepository(
+      firebaseTodoDataProvider: _firebaseTodoDataProvider,
+      firebaseAuthDataProvider: _firebaseAuthDataProvider,
+    );
+
     _bloc = RegistrationScreenBloc(
       authRepository: _authRepository,
+      todoRepository: _todoRepository,
     );
 
     _bloc.add(
@@ -60,10 +54,6 @@ class _UserRegistrationState extends State<UserRegistration> {
     );
 
     _errortext = '';
-    fetchName().then(
-      (value) => _name = value,
-    );
-    print(_name);
   }
 
   @override
@@ -108,8 +98,9 @@ class _UserRegistrationState extends State<UserRegistration> {
             // TODO一覧画面へ遷移する
             Navigator.of(context).push(
               MaterialPageRoute(
-                builder: (context) => const TodoList(
+                builder: (context) => TodoListScreenPage(
                   title: 'TODO監理\nTODO一覧',
+                  name: _nameTextEditingController.text,
                 ),
               ),
             );
@@ -175,8 +166,6 @@ class _UserRegistrationState extends State<UserRegistration> {
                       style: const TextStyle(color: Colors.black),
                       obscureText: false,
                       maxLines: 1,
-                      //パスワード
-                      onChanged: _handleText,
                       decoration: const InputDecoration(
                         hintText: '海馬　太郎',
                       ),
@@ -192,8 +181,6 @@ class _UserRegistrationState extends State<UserRegistration> {
                       style: const TextStyle(color: Colors.black),
                       obscureText: true,
                       maxLines: 1,
-                      //パスワード
-                      onChanged: _handleText,
                     ),
                     SizedBox(
                       // 「ログイン」ボタン
@@ -203,7 +190,7 @@ class _UserRegistrationState extends State<UserRegistration> {
                         onPressed: () {
                           // イベント発火
                           _bloc.add(
-                            OnCreateUserEvent(
+                            OnRequestedCreateUserEvent(
                               name: _nameTextEditingController.text,
                               password: _passwordTextEditingController.text,
                             ),

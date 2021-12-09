@@ -1,13 +1,16 @@
 import 'package:bloc/bloc.dart';
 import 'package:todo_management/repository/auth_repository.dart';
+import 'package:todo_management/repository/todo_repository.dart';
 import 'package:todo_management/screen/registration/bloc/user_registration_screen_event.dart';
 import 'package:todo_management/screen/registration/bloc/user_registration_screen_state.dart';
 
 class RegistrationScreenBloc extends Bloc {
   AuthRepository authRepository;
+  TodoRepository todoRepository;
 
   RegistrationScreenBloc({
     required this.authRepository,
+    required this.todoRepository,
   }) : super(
           InitialState(),
         );
@@ -39,7 +42,7 @@ class RegistrationScreenBloc extends Bloc {
     }
 
     // 認証要求
-    else if (event is OnCreateUserEvent) {
+    else if (event is OnRequestedCreateUserEvent) {
       yield CreateUserInProgressState();
 
       try {
@@ -55,6 +58,12 @@ class RegistrationScreenBloc extends Bloc {
         } else if (registrationResult != "success") {
           throw Exception(registrationResult);
         }
+
+        // ユーザーデータをユーザーコレクションへ追加
+        final createUserCollectionData = await todoRepository.createUserData(
+          email: event.name,
+          password: event.password,
+        );
 
         // ログイン
         final loginResult = await authRepository.login(
