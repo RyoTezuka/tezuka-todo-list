@@ -5,15 +5,8 @@ abstract class TodoListScreenEvent extends Equatable {
 }
 
 class OnRequestedInitializeEvent extends TodoListScreenEvent {
-  final String name;
-  const OnRequestedInitializeEvent({
-    required this.name,
-  });
-
   @override
-  List<Object> get props => [
-        name,
-      ];
+  List<Object> get props => [];
 
   @override
   String toString() => '初期化要求';
@@ -25,23 +18,4 @@ class OnCompletedRenderEvent extends TodoListScreenEvent {
 
   @override
   String toString() => '描画完了';
-}
-
-class OnRequestedAuthenticateEvent extends TodoListScreenEvent {
-  final String name;
-  final String password;
-
-  const OnRequestedAuthenticateEvent({
-    required this.name,
-    required this.password,
-  });
-
-  @override
-  List<Object> get props => [
-        name,
-        password,
-      ];
-
-  @override
-  String toString() => '認証要求';
 }

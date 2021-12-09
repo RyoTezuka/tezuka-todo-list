@@ -89,7 +89,7 @@ class _UserRegistrationScreenPageState extends State<UserRegistrationScreenPage>
           await Future.delayed(const Duration(seconds: 3));
 
           // ログイン試行結果を取得
-          var hasSuccessedLogin = state.result;
+          final hasSuccessedLogin = state.result;
 
           if (hasSuccessedLogin == 'success') {
             // ローディングダイアログを閉じる

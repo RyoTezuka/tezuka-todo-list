@@ -2,43 +2,25 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class FirebaseTodoDataProvider {
-  Future<Map<dynamic, dynamic>> getTodoList({
-    required User user,
+  Future<QuerySnapshot<Map<String, dynamic>>> getTodoList({
+    required String uid,
   }) async {
-    List<Map<dynamic, dynamic>> list = [];
-    Map<dynamic, Map<dynamic, dynamic>> result = {};
-    final snapshot = await FirebaseFirestore.instance
+    return await FirebaseFirestore.instance
         .collection('user_collection')
-        .doc(user.uid)
+        .doc(uid)
         .collection('todo_collection')
         .orderBy('title')
-        .get()
-        .then(
-          (value) => value.docs.forEach(
-            (element) {
-              Map<dynamic, dynamic> value = {};
-              value['title'] = element['title'];
-              value['deadline'] = element['deadline'];
-              value['priority'] = element['priority'];
-              list.add(value);
-            },
-          ),
-        );
-    var i = 0;
-    for (var value in list) {
-      result[i++] = value;
-    }
-    return result;
+        .get();
   }
 
   Future<String> createTodoListDocument({
-    required User user,
+    required String uid,
   }) async {
     await FirebaseFirestore.instance
         .collection(
           'user_collection',
         )
-        .doc(user.uid)
+        .doc(uid)
         .collection(
           'todo_collection',
         )
@@ -54,7 +36,7 @@ class FirebaseTodoDataProvider {
   }
 
   Future<String> createUserDocument({
-    required User user,
+    required String uid,
     required String name,
     required String password,
   }) async {
@@ -62,7 +44,7 @@ class FirebaseTodoDataProvider {
         .collection(
           'user_collection',
         )
-        .doc(user.uid)
+        .doc(uid)
         .set({
       'name': name,
       'password': password,

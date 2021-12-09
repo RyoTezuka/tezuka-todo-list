@@ -51,9 +51,7 @@ class _TodoListState extends State<TodoListScreenPage> {
       todoRepository: _todoRepository,
     );
     _bloc.add(
-      OnRequestedInitializeEvent(
-        name: widget.name,
-      ),
+      OnRequestedInitializeEvent(),
     );
   }
 
@@ -105,7 +103,7 @@ class _TodoListState extends State<TodoListScreenPage> {
                       color: Colors.lightGreenAccent,
                       margin: const EdgeInsets.fromLTRB(10, 10, 10, 0),
                       child: ListTile(
-                        title: Text(_todoData[index]['title']),
+                        title: Text('タイトル：${_todoData[index]['title']}'),
                         subtitle: Text(
                             '優先度：${_todoData[index]["priority"]}\n期限日:${_todoData[index]["deadline"]}'),
                         trailing: const Icon(Icons.more_vert),
@@ -114,8 +112,10 @@ class _TodoListState extends State<TodoListScreenPage> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const TodoDetailScreenPage(
+                              builder: (context) => TodoDetailScreenPage(
                                 title: 'TODO管理\nTODO詳細',
+                                name: widget.name,
+                                id: _todoData[index]["id"],
                               ),
                             ),
                           );

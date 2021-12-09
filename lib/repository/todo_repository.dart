@@ -12,15 +12,29 @@ class TodoRepository {
     required this.firebaseAuthDataProvider,
   });
 
-  // Future<Map<int, QueryDocumentSnapshot>?> getTodoData() async {
-  // Future<List<Map<String, dynamic>>?> getTodoData() async {
   Future<Map<dynamic, dynamic>?> getTodoData() async {
     try {
       User? user = await firebaseAuthDataProvider.getCurrentUser();
-      return await firebaseTodoDataProvider.getTodoList(
-        user: user!,
+      final res = await firebaseTodoDataProvider.getTodoList(
+        uid: user!.uid,
       );
-      // return "success";
+      List<Map<dynamic, dynamic>> list = [];
+      Map<dynamic, Map<dynamic, dynamic>> result = {};
+      res.docs.forEach(
+        (element) {
+          Map<dynamic, dynamic> value = {};
+          value['id'] = element.id;
+          value['title'] = element['title'];
+          value['deadline'] = element['deadline'];
+          value['priority'] = element['priority'];
+          list.add(value);
+        },
+      );
+      var i = 0;
+      for (var value in list) {
+        result[i++] = value;
+      }
+      return result;
     } on FirebaseException catch (e) {
       final code = () {
         switch (e.code) {
@@ -33,7 +47,7 @@ class TodoRepository {
         }
       }();
 
-      return null;
+      return {};
     } catch (e) {
       rethrow;
     }
@@ -43,7 +57,7 @@ class TodoRepository {
     try {
       User? user = await firebaseAuthDataProvider.getCurrentUser();
       await firebaseTodoDataProvider.createTodoListDocument(
-        user: user!,
+        uid: user!.uid,
       );
       return "success";
     } on FirebaseException catch (e) {
@@ -69,7 +83,7 @@ class TodoRepository {
     try {
       User? user = await firebaseAuthDataProvider.getCurrentUser();
       await firebaseTodoDataProvider.createUserDocument(
-        user: user!,
+        uid: user!.uid,
         name: email,
         password: password,
       );

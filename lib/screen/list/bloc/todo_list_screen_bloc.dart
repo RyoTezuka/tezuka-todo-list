@@ -15,14 +15,6 @@ class TodoListScreenBloc extends Bloc {
           InitialState(),
         );
 
-  late String _name = '';
-  Future<String> fetchName() async {
-    final snapshot = await FirebaseFirestore.instance.collection('user_collection').get();
-    final name = snapshot.docs.first.data()['name'];
-    print(name);
-    return name;
-  }
-
   @override
   String toString() => 'TODO一覧画面';
 
@@ -32,7 +24,6 @@ class TodoListScreenBloc extends Bloc {
     if (event is OnRequestedInitializeEvent) {
       yield InitializeInProgressState();
 
-      _name = event.props[0].toString();
       try {
         Map<dynamic, dynamic>? todoData = await todoRepository.getTodoData();
 
