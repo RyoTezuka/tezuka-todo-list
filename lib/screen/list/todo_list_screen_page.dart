@@ -75,7 +75,7 @@ class _TodoListState extends State<TodoListScreenPage> {
           ),
           body: SingleChildScrollView(
             child: Column(
-              children: [
+              children: <Widget>[
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -131,9 +131,10 @@ class _TodoListState extends State<TodoListScreenPage> {
             onPressed: () => {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) => const TodoCreateModifyScreenPage(
+                  builder: (context) => TodoCreateModifyScreenPage(
                     title: 'TODO管理\nTODO登録・更新',
-                    name: '',
+                    name: widget.name,
+                    id: '',
                   ),
                 ),
               ),

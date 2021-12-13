@@ -148,8 +148,6 @@ class _LoginScreenPageState extends State<LoginScreenPage> {
                       style: const TextStyle(color: Colors.black),
                       obscureText: false,
                       maxLines: 1,
-                      //パスワード
-                      // onChanged: _handleText,
                       decoration: const InputDecoration(
                         hintText: '海馬　太郎',
                       ),
@@ -165,8 +163,6 @@ class _LoginScreenPageState extends State<LoginScreenPage> {
                       style: const TextStyle(color: Colors.black),
                       obscureText: true,
                       maxLines: 1,
-                      //パスワード
-                      // onChanged: _handleText,
                     ),
                     SizedBox(
                       // 「ログイン」ボタン
