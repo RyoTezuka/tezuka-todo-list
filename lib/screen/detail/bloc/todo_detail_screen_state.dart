@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:todo_management/model/TodoModel.dart';
 
 abstract class TodoListScreenState extends Equatable {
   const TodoListScreenState();
@@ -21,7 +22,7 @@ class InitializeInProgressState extends TodoListScreenState {
 }
 
 class InitializeSuccessState extends TodoListScreenState {
-  final Map<dynamic, dynamic> todoDetailData;
+  final TodoModel todoDetailData;
   const InitializeSuccessState({
     required this.todoDetailData,
   });

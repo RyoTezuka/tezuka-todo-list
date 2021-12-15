@@ -1,10 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:intl/intl.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:todo_management/data_provider/firebase_auth_data_provider.dart';
 import 'package:todo_management/data_provider/firebase_todo_data_provider.dart';
+import 'package:todo_management/model/TodoModel.dart';
 
 class TodoRepository {
-  late final FirebaseTodoDataProvider firebaseTodoDataProvider;
-  late final FirebaseAuthDataProvider firebaseAuthDataProvider;
+  final FirebaseTodoDataProvider firebaseTodoDataProvider;
+  final FirebaseAuthDataProvider firebaseAuthDataProvider;
 
   TodoRepository({
     required this.firebaseTodoDataProvider,
@@ -13,14 +16,12 @@ class TodoRepository {
 
   Future<String> createUserData({
     required String email,
-    required String password,
   }) async {
     try {
       User? user = await firebaseAuthDataProvider.getCurrentUser();
       await firebaseTodoDataProvider.createUserDocument(
         uid: user!.uid,
         name: email,
-        password: password,
       );
       return "success";
     } on FirebaseAuthException catch (e) {
@@ -36,27 +37,28 @@ class TodoRepository {
     }
   }
 
-  Future<Map<dynamic, dynamic>?> getTodoList() async {
+  Future<List<TodoModel>> getTodoList() async {
+    Intl.defaultLocale = "ja_JP";
+    initializeDateFormatting("ja_JP");
+    DateFormat dateFormat = DateFormat("yyyy/MM/dd HH:mm", "ja_JP");
+
     try {
       User? user = await firebaseAuthDataProvider.getCurrentUser();
       final res = await firebaseTodoDataProvider.getTodoList(
         uid: user!.uid,
       );
-      List<Map<dynamic, dynamic>> list = [];
-      Map<dynamic, Map<dynamic, dynamic>> result = {};
+      List<TodoModel> list = [];
       for (var element in res.docs) {
-        Map<dynamic, dynamic> value = {};
-        value['id'] = element.id;
-        value['title'] = element['title'];
-        value['deadline'] = element['deadline'];
-        value['priority'] = element['priority'];
-        list.add(value);
+        TodoModel todoModel = TodoModel(
+          todoId: element.id,
+          title: element['title'],
+          deadline: dateFormat.format(element['deadline'].toDate()),
+          priority: element['priority'],
+          detail: element['detail'],
+        );
+        list.add(todoModel);
       }
-      var i = 0;
-      for (var value in list) {
-        result[i++] = value;
-      }
-      return result;
+      return list;
     } on FirebaseException catch (e) {
       final code = () {
         switch (e.code) {
@@ -69,23 +71,23 @@ class TodoRepository {
         }
       }();
 
-      return {};
+      return List.empty();
     } catch (e) {
       rethrow;
     }
   }
 
   Future<String> createTodoData({
-    required Map todoData,
+    required TodoModel todoData,
   }) async {
     try {
       User? user = await firebaseAuthDataProvider.getCurrentUser();
       await firebaseTodoDataProvider.createTodoDetail(
         uid: user!.uid,
-        title: todoData['title'],
-        deadline: todoData['deadline'],
-        detail: todoData['detail'],
-        priority: todoData['priority'],
+        title: todoData.title,
+        deadline: todoData.deadline,
+        detail: todoData.detail,
+        priority: todoData.priority,
       );
       return "success";
     } on FirebaseException catch (e) {
@@ -105,13 +107,13 @@ class TodoRepository {
   }
 
   Future<String> deleteTodoData({
-    required String id,
+    required String todoId,
   }) async {
     try {
       User? user = await firebaseAuthDataProvider.getCurrentUser();
       await firebaseTodoDataProvider.deleteTodoDetail(
         uid: user!.uid,
-        id: id,
+        todoId: todoId,
       );
       return "success";
     } on FirebaseException catch (e) {
@@ -131,17 +133,17 @@ class TodoRepository {
   }
 
   Future<String> updateTodoData({
-    required Map todoData,
+    required TodoModel todoData,
   }) async {
     try {
       User? user = await firebaseAuthDataProvider.getCurrentUser();
       await firebaseTodoDataProvider.updateTodoDetail(
         uid: user!.uid,
-        id: todoData['id'],
-        title: todoData['title'],
-        deadline: todoData['deadline'],
-        detail: todoData['detail'],
-        priority: todoData['priority'],
+        todoId: todoData.todoId,
+        title: todoData.title,
+        deadline: todoData.deadline,
+        detail: todoData.detail,
+        priority: todoData.priority,
       );
       return "success";
     } on FirebaseException catch (e) {
@@ -160,16 +162,29 @@ class TodoRepository {
     }
   }
 
-  Future<Map<dynamic, dynamic>?> getTodoData({
-    required String id,
+  Future<TodoModel> getTodoData({
+    required String todoId,
   }) async {
+    Intl.defaultLocale = "ja_JP";
+    initializeDateFormatting("ja_JP");
+    DateFormat dateFormat = DateFormat("yyyy/MM/dd HH:mm", "ja_JP");
+
     try {
       User? user = await firebaseAuthDataProvider.getCurrentUser();
       final res = await firebaseTodoDataProvider.getTodoDetail(
         uid: user!.uid,
-        id: id,
+        todoId: todoId,
       );
-      return res.data();
+      final resTodo = res.data()!;
+      TodoModel todoModel = TodoModel(
+        todoId: todoId,
+        title: resTodo['title'],
+        deadline: dateFormat.format(resTodo['deadline'].toDate()),
+        priority: resTodo['priority'],
+        detail: resTodo['detail'],
+      );
+
+      return todoModel;
     } on FirebaseException catch (e) {
       final code = () {
         switch (e.code) {
@@ -182,7 +197,7 @@ class TodoRepository {
         }
       }();
 
-      return {};
+      return [] as TodoModel;
     } catch (e) {
       rethrow;
     }

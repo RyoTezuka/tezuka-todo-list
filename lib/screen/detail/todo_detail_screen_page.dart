@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todo_management/data_provider/firebase_auth_data_provider.dart';
 import 'package:todo_management/data_provider/firebase_todo_data_provider.dart';
+import 'package:todo_management/model/TodoModel.dart';
 import 'package:todo_management/repository/auth_repository.dart';
 import 'package:todo_management/repository/todo_repository.dart';
 import 'package:todo_management/screen/create_modify/todo_create_modify_screen_page.dart';
@@ -13,11 +14,11 @@ class TodoDetailScreenPage extends StatefulWidget {
     Key? key,
     required this.title,
     required this.name,
-    required this.id,
+    required this.todoId,
   }) : super(key: key);
   final String title;
   final String name;
-  final String id;
+  final String todoId;
 
   @override
   State<TodoDetailScreenPage> createState() => _TodoDetailScreenPageState();
@@ -29,7 +30,7 @@ class _TodoDetailScreenPageState extends State<TodoDetailScreenPage> {
   late FirebaseTodoDataProvider _firebaseTodoDataProvider;
   late AuthRepository _authRepository;
   late TodoRepository _todoRepository;
-  late Map<dynamic, dynamic> _todoDetailData;
+  late TodoModel _todoDetailData;
 
   @override
   void initState() {
@@ -50,11 +51,17 @@ class _TodoDetailScreenPageState extends State<TodoDetailScreenPage> {
       authRepository: _authRepository,
       todoRepository: _todoRepository,
     );
-    _todoDetailData = {};
+    _todoDetailData = const TodoModel(
+      todoId: '',
+      title: '',
+      deadline: '',
+      priority: '',
+      detail: '',
+    );
     _bloc.add(
       OnRequestedInitializeEvent(
         name: widget.name,
-        id: widget.id,
+        todoId: widget.todoId,
       ),
     );
   }
@@ -93,7 +100,7 @@ class _TodoDetailScreenPageState extends State<TodoDetailScreenPage> {
               builder: (context) => TodoCreateModifyScreenPage(
                 title: 'TODO管理\nユーザー更新',
                 name: widget.name,
-                id: widget.id,
+                todoId: widget.todoId,
               ),
             ),
           );
@@ -130,7 +137,7 @@ class _TodoDetailScreenPageState extends State<TodoDetailScreenPage> {
                   children: <Widget>[
                     Row(
                       children: [
-                        Text('タイトル:  ${_todoDetailData['title']}'),
+                        Text('タイトル:  ${_todoDetailData.title}'),
                       ],
                     ),
                     const SizedBox(
@@ -138,7 +145,7 @@ class _TodoDetailScreenPageState extends State<TodoDetailScreenPage> {
                     ),
                     Row(
                       children: [
-                        Text('期日:  ${_todoDetailData['deadline']}'),
+                        Text('期日:  ${_todoDetailData.deadline}'),
                       ],
                     ),
                     const SizedBox(
@@ -146,7 +153,7 @@ class _TodoDetailScreenPageState extends State<TodoDetailScreenPage> {
                     ),
                     Row(
                       children: [
-                        Text('優先順位:  ${_todoDetailData['priority']}'),
+                        Text('優先順位:  ${_todoDetailData.priority}'),
                       ],
                     ),
                     const SizedBox(
@@ -162,7 +169,7 @@ class _TodoDetailScreenPageState extends State<TodoDetailScreenPage> {
                       height: 325,
                       child: Container(
                         color: Colors.white,
-                        child: Text('${_todoDetailData['detail']}'),
+                        child: Text(_todoDetailData.detail),
                       ),
                     ),
                   ],
@@ -183,7 +190,7 @@ class _TodoDetailScreenPageState extends State<TodoDetailScreenPage> {
                         // イベント発火
                         _bloc.add(
                           OnRequestedUpdateEvent(
-                            id: widget.id,
+                            todoId: widget.todoId,
                           ),
                         );
                       },
@@ -204,7 +211,7 @@ class _TodoDetailScreenPageState extends State<TodoDetailScreenPage> {
                         // イベント発火
                         _bloc.add(
                           OnRequestedDeleteEvent(
-                            id: widget.id,
+                            todoId: widget.todoId,
                           ),
                         );
                       },

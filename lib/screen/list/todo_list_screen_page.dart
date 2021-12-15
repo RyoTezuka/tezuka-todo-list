@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todo_management/data_provider/firebase_auth_data_provider.dart';
 import 'package:todo_management/data_provider/firebase_todo_data_provider.dart';
+import 'package:todo_management/model/TodoModel.dart';
 import 'package:todo_management/repository/auth_repository.dart';
 import 'package:todo_management/repository/todo_repository.dart';
 import 'package:todo_management/screen/create_modify/todo_create_modify_screen_page.dart';
@@ -29,7 +30,7 @@ class _TodoListState extends State<TodoListScreenPage> {
   late AuthRepository _authRepository;
   late TodoRepository _todoRepository;
 
-  late Map _todoData = {};
+  late List<TodoModel> _todoData;
 
   @override
   void initState() {
@@ -45,6 +46,8 @@ class _TodoListState extends State<TodoListScreenPage> {
       firebaseTodoDataProvider: _firebaseTodoDataProvider,
       firebaseAuthDataProvider: _firebaseAuthDataProvider,
     );
+
+    _todoData = [];
 
     _bloc = TodoListScreenBloc(
       authRepository: _authRepository,
@@ -103,9 +106,9 @@ class _TodoListState extends State<TodoListScreenPage> {
                       color: Colors.lightGreenAccent,
                       margin: const EdgeInsets.fromLTRB(10, 10, 10, 0),
                       child: ListTile(
-                        title: Text('タイトル：${_todoData[index]['title']}'),
+                        title: Text('タイトル：${_todoData[index].title}'),
                         subtitle: Text(
-                            '優先度：${_todoData[index]["priority"]}\n期限日:${_todoData[index]["deadline"]}'),
+                            '優先度：${_todoData[index].priority}\n期限日:${_todoData[index].deadline}'),
                         trailing: const Icon(Icons.more_vert),
                         leading: const Icon(Icons.movie, color: Colors.pink),
                         onTap: () {
@@ -115,7 +118,7 @@ class _TodoListState extends State<TodoListScreenPage> {
                               builder: (context) => TodoDetailScreenPage(
                                 title: 'TODO管理\nTODO詳細',
                                 name: widget.name,
-                                id: _todoData[index]["id"],
+                                todoId: _todoData[index].todoId,
                               ),
                             ),
                           );
@@ -134,7 +137,7 @@ class _TodoListState extends State<TodoListScreenPage> {
                   builder: (context) => TodoCreateModifyScreenPage(
                     title: 'TODO管理\nTODO登録・更新',
                     name: widget.name,
-                    id: '',
+                    todoId: '',
                   ),
                 ),
               ),

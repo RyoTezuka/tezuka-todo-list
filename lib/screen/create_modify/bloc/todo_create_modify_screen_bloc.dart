@@ -1,6 +1,5 @@
 import 'package:bloc/bloc.dart';
-import 'package:intl/intl.dart';
-import 'package:intl/date_symbol_data_local.dart';
+import 'package:todo_management/model/TodoModel.dart';
 import 'package:todo_management/repository/auth_repository.dart';
 import 'package:todo_management/repository/todo_repository.dart';
 import 'package:todo_management/screen/create_modify/bloc/todo_create_modify_screen.dart';
@@ -21,24 +20,21 @@ class TodoCreateModifyScreenBloc extends Bloc {
 
   @override
   Stream mapEventToState(event) async* {
-    Intl.defaultLocale = "ja_JP";
-    initializeDateFormatting("ja_JP");
-    final DateFormat dateFormat = DateFormat("yyyy/MM/dd HH:mm", "ja_JP");
-
     // 初期化要求
     if (event is OnRequestedInitializeEvent) {
       yield InitializeInProgressState();
 
       try {
-        final Map<dynamic, dynamic>? todoDetailData;
+        final TodoModel todoDetailData;
 
-        if (event.id == '') {
-          todoDetailData = {
-            'title': '',
-            'deadline': '',
-            'priority': 'A',
-            'detail': '',
-          };
+        if (event.todoId == '') {
+          todoDetailData = const TodoModel(
+            todoId: '',
+            title: '',
+            deadline: '',
+            priority: 'A',
+            detail: '',
+          );
           yield InitializeSuccessState(
             isCreate: true,
             todoDetailData: todoDetailData,
@@ -49,9 +45,8 @@ class TodoCreateModifyScreenBloc extends Bloc {
         else {
           // TODO詳細情報取得
           todoDetailData = await todoRepository.getTodoData(
-            id: event.id,
+            todoId: event.todoId,
           );
-          todoDetailData!['deadline'] = dateFormat.format(todoDetailData['deadline'].toDate());
           yield InitializeSuccessState(
             isCreate: false,
             todoDetailData: todoDetailData,
@@ -84,16 +79,16 @@ class TodoCreateModifyScreenBloc extends Bloc {
       yield CreateUpdateInProgressState();
 
       try {
-        Map<dynamic, dynamic> data = {
-          'id': event.id,
-          'title': event.title,
-          'deadline': dateFormat.parseStrict(event.deadline),
-          'priority': event.priority,
-          'detail': event.detail,
-        };
+        TodoModel data = TodoModel(
+          todoId: event.todoId,
+          title: event.title,
+          deadline: event.deadline,
+          priority: event.priority,
+          detail: event.detail,
+        );
 
         // 登録処理
-        if (event.id == '') {
+        if (event.todoId == '') {
           await todoRepository.createTodoData(
             todoData: data,
           );

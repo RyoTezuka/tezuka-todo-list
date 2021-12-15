@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:todo_management/data_provider/firebase_auth_data_provider.dart';
 import 'package:todo_management/data_provider/firebase_todo_data_provider.dart';
+import 'package:todo_management/model/TodoModel.dart';
 import 'package:todo_management/repository/auth_repository.dart';
 import 'package:todo_management/repository/todo_repository.dart';
 import 'package:todo_management/screen/create_modify/bloc/todo_create_modify_screen.dart';
@@ -14,11 +15,11 @@ class TodoCreateModifyScreenPage extends StatefulWidget {
     Key? key,
     required this.title,
     required this.name,
-    required this.id,
+    required this.todoId,
   }) : super(key: key);
   final String title;
   final String name;
-  final String id;
+  final String todoId;
 
   @override
   State<TodoCreateModifyScreenPage> createState() => _TodoCreateModifyScreenPageState();
@@ -26,7 +27,6 @@ class TodoCreateModifyScreenPage extends StatefulWidget {
 
 class _TodoCreateModifyScreenPageState extends State<TodoCreateModifyScreenPage> {
   late TextEditingController _titleTextEditingController;
-  late TextEditingController _deadlineTextEditingController;
   late TextEditingController _detailTextEditingController;
 
   late TodoCreateModifyScreenBloc _bloc;
@@ -34,7 +34,7 @@ class _TodoCreateModifyScreenPageState extends State<TodoCreateModifyScreenPage>
   late FirebaseTodoDataProvider _firebaseTodoDataProvider;
   late AuthRepository _authRepository;
   late TodoRepository _todoRepository;
-  late Map<dynamic, dynamic> _todoDetailData;
+  late TodoModel _todoDetailData;
 
   String dropdownValue = 'A';
   final dropdownItem = <String>[
@@ -60,7 +60,6 @@ class _TodoCreateModifyScreenPageState extends State<TodoCreateModifyScreenPage>
         initialDate: _date,
         firstDate: DateTime(2016),
         lastDate: DateTime.now().add(const Duration(days: 360)));
-    // if (picked != null) setState(() => _date = picked);
     if (picked != null) {
       _bloc.add(
         OnChangeDateTimeEvent(dateTime: picked),
@@ -81,12 +80,18 @@ class _TodoCreateModifyScreenPageState extends State<TodoCreateModifyScreenPage>
     }
   }
 
-  String toDateTime(DateTime d, TimeOfDay t) {
+  String toDateTime(DateTime dateTime, TimeOfDay timeOfDay) {
     Intl.defaultLocale = "ja_JP";
     initializeDateFormatting("ja_JP");
     DateFormat dateFormat = DateFormat("yyyy/MM/dd HH:mm", "ja_JP");
 
-    deadline = dateFormat.format(DateTime(d.year, d.month, d.day, t.hour, t.minute));
+    deadline = dateFormat.format(DateTime(
+      dateTime.year,
+      dateTime.month,
+      dateTime.day,
+      timeOfDay.hour,
+      timeOfDay.minute,
+    ));
     return deadline;
   }
 
@@ -95,7 +100,6 @@ class _TodoCreateModifyScreenPageState extends State<TodoCreateModifyScreenPage>
     super.initState();
 
     _titleTextEditingController = TextEditingController();
-    _deadlineTextEditingController = TextEditingController();
     _detailTextEditingController = TextEditingController();
 
     _firebaseAuthDataProvider = FirebaseAuthDataProvider();
@@ -113,11 +117,17 @@ class _TodoCreateModifyScreenPageState extends State<TodoCreateModifyScreenPage>
       authRepository: _authRepository,
       todoRepository: _todoRepository,
     );
-    _todoDetailData = {};
+    _todoDetailData = const TodoModel(
+      todoId: '',
+      title: '',
+      deadline: '',
+      priority: '',
+      detail: '',
+    );
     _bloc.add(
       OnRequestedInitializeEvent(
         name: widget.name,
-        id: widget.id,
+        todoId: widget.todoId,
       ),
     );
   }
@@ -127,12 +137,12 @@ class _TodoCreateModifyScreenPageState extends State<TodoCreateModifyScreenPage>
     return BlocConsumer(
       bloc: _bloc,
       listener: (context, state) async {
-        // 初期化中
+        // 初期化成功後
         if (state is InitializeSuccessState) {
           _todoDetailData = state.todoDetailData;
-          _titleTextEditingController.text = _todoDetailData['title'];
-          dropdownValue = _todoDetailData['priority'];
-          _detailTextEditingController.text = _todoDetailData['detail'];
+          _titleTextEditingController.text = _todoDetailData.title;
+          dropdownValue = _todoDetailData.priority;
+          _detailTextEditingController.text = _todoDetailData.detail;
 
           // 新規登録
           if (state.isCreate) {
@@ -140,7 +150,7 @@ class _TodoCreateModifyScreenPageState extends State<TodoCreateModifyScreenPage>
           }
           // 更新
           else {
-            deadline = _todoDetailData['deadline'];
+            deadline = _todoDetailData.deadline;
           }
 
           _bloc.add(
@@ -163,11 +173,19 @@ class _TodoCreateModifyScreenPageState extends State<TodoCreateModifyScreenPage>
         else if (state is ChangeDateTimeState) {
           _date = state.dateTime;
           deadline = toDateTime(_date, _time);
+
+          _bloc.add(
+            OnCompletedRenderEvent(),
+          );
         }
         // 時間変更
         else if (state is ChangeTimeOfDayState) {
           _time = state.timeOfDay;
           deadline = toDateTime(_date, _time);
+
+          _bloc.add(
+            OnCompletedRenderEvent(),
+          );
         }
       },
       builder: (context, state) {
@@ -222,9 +240,6 @@ class _TodoCreateModifyScreenPageState extends State<TodoCreateModifyScreenPage>
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // TODO 日付選択ウィジェット
-                          // Text('期日:  ${_todoDetailData['deadline']}'),
-                          // Text('期日: ${toDateTime(_date, _time)}'),
                           Text('期日: $deadline'),
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
@@ -322,7 +337,7 @@ class _TodoCreateModifyScreenPageState extends State<TodoCreateModifyScreenPage>
                           // イベント発火
                           _bloc.add(
                             OnCreateModifyEvent(
-                              id: widget.id,
+                              todoId: widget.todoId,
                               title: _titleTextEditingController.text,
                               detail: _detailTextEditingController.text,
                               priority: dropdownValue,

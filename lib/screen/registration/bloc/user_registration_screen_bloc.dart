@@ -62,7 +62,6 @@ class RegistrationScreenBloc extends Bloc {
         // ユーザーデータをユーザーコレクションへ追加
         final createUserCollectionData = await todoRepository.createUserData(
           email: event.name,
-          password: event.password,
         );
 
         // ログイン

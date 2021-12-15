@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:todo_management/model/TodoModel.dart';
 
 abstract class TodoListScreenState extends Equatable {
   const TodoListScreenState();
@@ -22,7 +22,7 @@ class InitializeInProgressState extends TodoListScreenState {
 }
 
 class InitializeSuccessState extends TodoListScreenState {
-  final Map todoData;
+  final List<TodoModel> todoData;
   const InitializeSuccessState({
     required this.todoData,
   });

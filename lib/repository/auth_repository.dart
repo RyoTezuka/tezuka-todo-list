@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:todo_management/data_provider/firebase_auth_data_provider.dart';
 
 class AuthRepository {
-  late final FirebaseAuthDataProvider firebaseAuthDataProvider;
+  final FirebaseAuthDataProvider firebaseAuthDataProvider;
 
   AuthRepository({
     required this.firebaseAuthDataProvider,

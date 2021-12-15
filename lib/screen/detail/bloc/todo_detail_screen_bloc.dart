@@ -32,9 +32,8 @@ class TodoDetailScreenBloc extends Bloc {
       try {
         // TODO詳細情報取得
         final todoDetailData = await todoRepository.getTodoData(
-          id: event.id,
+          todoId: event.todoId,
         );
-        todoDetailData!['deadline'] = dateFormat.format(todoDetailData['deadline'].toDate());
 
         yield InitializeSuccessState(
           todoDetailData: todoDetailData,
@@ -66,7 +65,7 @@ class TodoDetailScreenBloc extends Bloc {
       try {
         // TODO詳細情報削除
         final todoDetailData = await todoRepository.deleteTodoData(
-          id: event.id,
+          todoId: event.todoId,
         );
 
         yield DeleteSuccessState();

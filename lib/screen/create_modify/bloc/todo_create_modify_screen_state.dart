@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+import 'package:todo_management/model/TodoModel.dart';
 
 abstract class TodoCreateModifyScreenState extends Equatable {
   const TodoCreateModifyScreenState();
@@ -23,7 +24,7 @@ class InitializeInProgressState extends TodoCreateModifyScreenState {
 
 class InitializeSuccessState extends TodoCreateModifyScreenState {
   final bool isCreate;
-  final Map<dynamic, dynamic> todoDetailData;
+  final TodoModel todoDetailData;
   const InitializeSuccessState({
     required this.isCreate,
     required this.todoDetailData,

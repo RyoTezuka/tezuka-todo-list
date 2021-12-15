@@ -167,7 +167,7 @@ class _UserRegistrationScreenPageState extends State<UserRegistrationScreenPage>
                       obscureText: false,
                       maxLines: 1,
                       decoration: const InputDecoration(
-                        hintText: '海馬　太郎',
+                        hintText: 'todo_taro@test00.jp',
                       ),
                     ),
                     const Text(

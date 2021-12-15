@@ -6,16 +6,16 @@ abstract class TodoDetailScreenEvent extends Equatable {
 
 class OnRequestedInitializeEvent extends TodoDetailScreenEvent {
   final String name;
-  final String id;
+  final String todoId;
   const OnRequestedInitializeEvent({
     required this.name,
-    required this.id,
+    required this.todoId,
   });
 
   @override
   List<Object> get props => [
         name,
-        id,
+        todoId,
       ];
 
   @override
@@ -31,13 +31,13 @@ class OnCompletedRenderEvent extends TodoDetailScreenEvent {
 }
 
 class OnRequestedUpdateEvent extends TodoDetailScreenEvent {
-  final String id;
+  final String todoId;
   const OnRequestedUpdateEvent({
-    required this.id,
+    required this.todoId,
   });
   @override
   List<Object> get props => [
-        id,
+        todoId,
       ];
 
   @override
@@ -45,14 +45,14 @@ class OnRequestedUpdateEvent extends TodoDetailScreenEvent {
 }
 
 class OnRequestedDeleteEvent extends TodoDetailScreenEvent {
-  final String id;
+  final String todoId;
   const OnRequestedDeleteEvent({
-    required this.id,
+    required this.todoId,
   });
 
   @override
   List<Object> get props => [
-        id,
+        todoId,
       ];
 
   @override
