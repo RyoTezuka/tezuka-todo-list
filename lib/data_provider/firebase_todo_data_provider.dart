@@ -1,6 +1,5 @@
-import 'package:intl/intl.dart';
-import 'package:intl/date_symbol_data_local.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:todo_management/util/date_format_util.dart';
 
 class FirebaseTodoDataProvider {
   Future<String> createUserDocument({
@@ -49,10 +48,6 @@ class FirebaseTodoDataProvider {
     required String priority,
     required String detail,
   }) async {
-    Intl.defaultLocale = "ja_JP";
-    initializeDateFormatting("ja_JP");
-    final DateFormat dateFormat = DateFormat("yyyy/MM/dd HH:mm", "ja_JP");
-
     await FirebaseFirestore.instance
         .collection('user_collection')
         .doc(uid)
@@ -60,7 +55,7 @@ class FirebaseTodoDataProvider {
         .doc()
         .set({
       'title': title,
-      'deadline': Timestamp.fromDate(dateFormat.parseStrict(deadline)),
+      'deadline': formatStringToTimestamp(sDateTime: deadline),
       'priority': priority,
       'detail': detail,
       'create_timestamp': FieldValue.serverTimestamp(),
@@ -76,10 +71,6 @@ class FirebaseTodoDataProvider {
     required String priority,
     required String detail,
   }) async {
-    Intl.defaultLocale = "ja_JP";
-    initializeDateFormatting("ja_JP");
-    final DateFormat dateFormat = DateFormat("yyyy/MM/dd HH:mm", "ja_JP");
-
     await FirebaseFirestore.instance
         .collection('user_collection')
         .doc(uid)
@@ -87,7 +78,7 @@ class FirebaseTodoDataProvider {
         .doc(todoId)
         .update({
       'title': title,
-      'deadline': Timestamp.fromDate(dateFormat.parseStrict(deadline)),
+      'deadline': formatStringToTimestamp(sDateTime: deadline),
       'priority': priority,
       'detail': detail,
       'update_timestamp': FieldValue.serverTimestamp(),

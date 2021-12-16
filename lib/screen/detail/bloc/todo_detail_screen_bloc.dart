@@ -1,6 +1,4 @@
 import 'package:bloc/bloc.dart';
-import 'package:intl/intl.dart';
-import 'package:intl/date_symbol_data_local.dart';
 import 'package:todo_management/repository/auth_repository.dart';
 import 'package:todo_management/repository/todo_repository.dart';
 import 'package:todo_management/screen/detail/bloc/todo_detail_screen.dart';
@@ -21,10 +19,6 @@ class TodoDetailScreenBloc extends Bloc {
 
   @override
   Stream mapEventToState(event) async* {
-    Intl.defaultLocale = "ja_JP";
-    initializeDateFormatting("ja_JP");
-    DateFormat dateFormat = DateFormat("yyyy/MM/dd HH:mm", "ja_JP");
-
     // 初期化要求
     if (event is OnRequestedInitializeEvent) {
       yield InitializeInProgressState();

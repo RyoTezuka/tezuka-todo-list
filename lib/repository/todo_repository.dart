@@ -1,9 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:intl/intl.dart';
-import 'package:intl/date_symbol_data_local.dart';
 import 'package:todo_management/data_provider/firebase_auth_data_provider.dart';
 import 'package:todo_management/data_provider/firebase_todo_data_provider.dart';
 import 'package:todo_management/model/TodoModel.dart';
+import 'package:todo_management/util/date_format_util.dart';
 
 class TodoRepository {
   final FirebaseTodoDataProvider firebaseTodoDataProvider;
@@ -38,10 +37,6 @@ class TodoRepository {
   }
 
   Future<List<TodoModel>> getTodoList() async {
-    Intl.defaultLocale = "ja_JP";
-    initializeDateFormatting("ja_JP");
-    DateFormat dateFormat = DateFormat("yyyy/MM/dd HH:mm", "ja_JP");
-
     try {
       User? user = await firebaseAuthDataProvider.getCurrentUser();
       final res = await firebaseTodoDataProvider.getTodoList(
@@ -52,7 +47,7 @@ class TodoRepository {
         TodoModel todoModel = TodoModel(
           todoId: element.id,
           title: element['title'],
-          deadline: dateFormat.format(element['deadline'].toDate()),
+          deadline: formatTimestampToString(tDateTime: element['deadline']),
           priority: element['priority'],
           detail: element['detail'],
         );
@@ -165,10 +160,6 @@ class TodoRepository {
   Future<TodoModel> getTodoData({
     required String todoId,
   }) async {
-    Intl.defaultLocale = "ja_JP";
-    initializeDateFormatting("ja_JP");
-    DateFormat dateFormat = DateFormat("yyyy/MM/dd HH:mm", "ja_JP");
-
     try {
       User? user = await firebaseAuthDataProvider.getCurrentUser();
       final res = await firebaseTodoDataProvider.getTodoDetail(
@@ -179,7 +170,7 @@ class TodoRepository {
       TodoModel todoModel = TodoModel(
         todoId: todoId,
         title: resTodo['title'],
-        deadline: dateFormat.format(resTodo['deadline'].toDate()),
+        deadline: formatTimestampToString(tDateTime: resTodo['deadline']),
         priority: resTodo['priority'],
         detail: resTodo['detail'],
       );

@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
-import 'package:intl/date_symbol_data_local.dart';
 import 'package:todo_management/data_provider/firebase_auth_data_provider.dart';
 import 'package:todo_management/data_provider/firebase_todo_data_provider.dart';
 import 'package:todo_management/model/TodoModel.dart';
@@ -9,6 +7,7 @@ import 'package:todo_management/repository/auth_repository.dart';
 import 'package:todo_management/repository/todo_repository.dart';
 import 'package:todo_management/screen/create_modify/bloc/todo_create_modify_screen.dart';
 import 'package:todo_management/screen/list/todo_list_screen_page.dart';
+import 'package:todo_management/util/date_format_util.dart';
 
 class TodoCreateModifyScreenPage extends StatefulWidget {
   const TodoCreateModifyScreenPage({
@@ -81,18 +80,15 @@ class _TodoCreateModifyScreenPageState extends State<TodoCreateModifyScreenPage>
   }
 
   String toDateTime(DateTime dateTime, TimeOfDay timeOfDay) {
-    Intl.defaultLocale = "ja_JP";
-    initializeDateFormatting("ja_JP");
-    DateFormat dateFormat = DateFormat("yyyy/MM/dd HH:mm", "ja_JP");
-
-    deadline = dateFormat.format(DateTime(
-      dateTime.year,
-      dateTime.month,
-      dateTime.day,
-      timeOfDay.hour,
-      timeOfDay.minute,
-    ));
-    return deadline;
+    return formatDateTimeToString(
+      dDateTime: DateTime(
+        dateTime.year,
+        dateTime.month,
+        dateTime.day,
+        timeOfDay.hour,
+        timeOfDay.minute,
+      ),
+    );
   }
 
   @override
