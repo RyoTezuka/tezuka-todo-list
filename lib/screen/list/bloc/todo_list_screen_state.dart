@@ -23,6 +23,7 @@ class InitializeInProgressState extends TodoListScreenState {
 
 class InitializeSuccessState extends TodoListScreenState {
   final List<TodoModel> todoData;
+
   const InitializeSuccessState({
     required this.todoData,
   });

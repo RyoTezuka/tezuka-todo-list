@@ -53,6 +53,7 @@ class _TodoCreateModifyScreenPageState extends State<TodoCreateModifyScreenPage>
   String deadline = '';
 
   DateTime _date = DateTime.now();
+
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
         context: context,
@@ -67,6 +68,7 @@ class _TodoCreateModifyScreenPageState extends State<TodoCreateModifyScreenPage>
   }
 
   TimeOfDay _time = TimeOfDay.now();
+
   Future<void> _selectTime(BuildContext context) async {
     final TimeOfDay? picked = await showTimePicker(
       context: context,
@@ -122,7 +124,6 @@ class _TodoCreateModifyScreenPageState extends State<TodoCreateModifyScreenPage>
     );
     _bloc.add(
       OnRequestedInitializeEvent(
-        name: widget.name,
         todoId: widget.todoId,
       ),
     );

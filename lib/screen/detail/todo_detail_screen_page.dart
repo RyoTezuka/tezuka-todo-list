@@ -60,7 +60,6 @@ class _TodoDetailScreenPageState extends State<TodoDetailScreenPage> {
     );
     _bloc.add(
       OnRequestedInitializeEvent(
-        name: widget.name,
         todoId: widget.todoId,
       ),
     );

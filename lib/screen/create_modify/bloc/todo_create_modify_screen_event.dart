@@ -6,16 +6,14 @@ abstract class TodoCreateModifyScreenEvent extends Equatable {
 }
 
 class OnRequestedInitializeEvent extends TodoCreateModifyScreenEvent {
-  final String name;
   final String todoId;
+
   const OnRequestedInitializeEvent({
-    required this.name,
     required this.todoId,
   });
 
   @override
   List<Object> get props => [
-        name,
         todoId,
       ];
 
@@ -37,6 +35,7 @@ class OnCreateModifyEvent extends TodoCreateModifyScreenEvent {
   final String deadline;
   final String priority;
   final String detail;
+
   const OnCreateModifyEvent({
     required this.todoId,
     required this.title,
@@ -44,6 +43,7 @@ class OnCreateModifyEvent extends TodoCreateModifyScreenEvent {
     required this.detail,
     required this.priority,
   });
+
   @override
   List<Object> get props => [
         todoId,
@@ -59,6 +59,7 @@ class OnCreateModifyEvent extends TodoCreateModifyScreenEvent {
 
 class OnChangeDateTimeEvent extends TodoCreateModifyScreenEvent {
   final DateTime dateTime;
+
   const OnChangeDateTimeEvent({
     required this.dateTime,
   });
@@ -74,6 +75,7 @@ class OnChangeDateTimeEvent extends TodoCreateModifyScreenEvent {
 
 class OnChangeTimeOfDayEvent extends TodoCreateModifyScreenEvent {
   final TimeOfDay timeOfDay;
+
   const OnChangeTimeOfDayEvent({
     required this.timeOfDay,
   });

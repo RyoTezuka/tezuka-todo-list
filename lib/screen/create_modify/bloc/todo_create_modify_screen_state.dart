@@ -25,6 +25,7 @@ class InitializeInProgressState extends TodoCreateModifyScreenState {
 class InitializeSuccessState extends TodoCreateModifyScreenState {
   final bool isCreate;
   final TodoModel todoDetailData;
+
   const InitializeSuccessState({
     required this.isCreate,
     required this.todoDetailData,
@@ -69,9 +70,11 @@ class IdleState extends TodoCreateModifyScreenState {
 
 class ChangeDateTimeState extends TodoCreateModifyScreenState {
   final DateTime dateTime;
+
   const ChangeDateTimeState({
     required this.dateTime,
   });
+
   @override
   List<Object> get props => [
         dateTime,
@@ -83,9 +86,11 @@ class ChangeDateTimeState extends TodoCreateModifyScreenState {
 
 class ChangeTimeOfDayState extends TodoCreateModifyScreenState {
   final TimeOfDay timeOfDay;
+
   const ChangeTimeOfDayState({
     required this.timeOfDay,
   });
+
   @override
   List<Object> get props => [
         timeOfDay,

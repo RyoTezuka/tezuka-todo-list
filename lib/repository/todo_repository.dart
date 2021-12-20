@@ -16,181 +16,90 @@ class TodoRepository {
   Future<String> createUserData({
     required String email,
   }) async {
-    try {
-      User? user = await firebaseAuthDataProvider.getCurrentUser();
-      await firebaseTodoDataProvider.createUserDocument(
-        uid: user!.uid,
-        name: email,
-      );
-      return "success";
-    } on FirebaseAuthException catch (e) {
-      String code = e.code;
-      if (e.code == 'weak-password') {
-        return 'The password provided is too weak.';
-      } else if (e.code == 'email-already-in-use') {
-        return 'The account already exists for that email.';
-      }
-      return code;
-    } catch (e) {
-      rethrow;
-    }
+    User? user = await firebaseAuthDataProvider.getCurrentUser();
+    await firebaseTodoDataProvider.createUserDocument(
+      uid: user!.uid,
+      name: email,
+    );
+    return "success";
   }
 
   Future<List<TodoModel>> getTodoList() async {
-    try {
-      User? user = await firebaseAuthDataProvider.getCurrentUser();
-      final res = await firebaseTodoDataProvider.getTodoList(
-        uid: user!.uid,
+    User? user = await firebaseAuthDataProvider.getCurrentUser();
+    final res = await firebaseTodoDataProvider.getTodoList(
+      uid: user!.uid,
+    );
+    List<TodoModel> list = [];
+    for (var element in res.docs) {
+      TodoModel todoModel = TodoModel(
+        todoId: element.id,
+        title: element['title'],
+        deadline: formatTimestampToString(tDateTime: element['deadline']),
+        priority: element['priority'],
+        detail: element['detail'],
       );
-      List<TodoModel> list = [];
-      for (var element in res.docs) {
-        TodoModel todoModel = TodoModel(
-          todoId: element.id,
-          title: element['title'],
-          deadline: formatTimestampToString(tDateTime: element['deadline']),
-          priority: element['priority'],
-          detail: element['detail'],
-        );
-        list.add(todoModel);
-      }
-      return list;
-    } on FirebaseException catch (e) {
-      final code = () {
-        switch (e.code) {
-          case "invalid-name":
-            return "invalid_name";
-          case "user_disabled":
-            return "user_disabled";
-          default:
-            return "unexpected_error";
-        }
-      }();
-
-      return List.empty();
-    } catch (e) {
-      rethrow;
+      list.add(todoModel);
     }
+    return list;
   }
 
   Future<String> createTodoData({
     required TodoModel todoData,
   }) async {
-    try {
-      User? user = await firebaseAuthDataProvider.getCurrentUser();
-      await firebaseTodoDataProvider.createTodoDetail(
-        uid: user!.uid,
-        title: todoData.title,
-        deadline: todoData.deadline,
-        detail: todoData.detail,
-        priority: todoData.priority,
-      );
-      return "success";
-    } on FirebaseException catch (e) {
-      // TODO データ作成失敗時の処理を実装する
-      final code = () {
-        switch (e.code) {
-          case "success":
-            return "OK";
-          default:
-            return "default";
-        }
-      }();
-      return code;
-    } catch (e) {
-      rethrow;
-    }
+    User? user = await firebaseAuthDataProvider.getCurrentUser();
+    await firebaseTodoDataProvider.createTodoDetail(
+      uid: user!.uid,
+      title: todoData.title,
+      deadline: todoData.deadline,
+      detail: todoData.detail,
+      priority: todoData.priority,
+    );
+    return "success";
   }
 
   Future<String> deleteTodoData({
     required String todoId,
   }) async {
-    try {
-      User? user = await firebaseAuthDataProvider.getCurrentUser();
-      await firebaseTodoDataProvider.deleteTodoDetail(
-        uid: user!.uid,
-        todoId: todoId,
-      );
-      return "success";
-    } on FirebaseException catch (e) {
-      // TODO データ作成失敗時の処理を実装する
-      final code = () {
-        switch (e.code) {
-          case "success":
-            return "OK";
-          default:
-            return "default";
-        }
-      }();
-      return code;
-    } catch (e) {
-      rethrow;
-    }
+    User? user = await firebaseAuthDataProvider.getCurrentUser();
+    await firebaseTodoDataProvider.deleteTodoDetail(
+      uid: user!.uid,
+      todoId: todoId,
+    );
+    return "success";
   }
 
   Future<String> updateTodoData({
     required TodoModel todoData,
   }) async {
-    try {
-      User? user = await firebaseAuthDataProvider.getCurrentUser();
-      await firebaseTodoDataProvider.updateTodoDetail(
-        uid: user!.uid,
-        todoId: todoData.todoId,
-        title: todoData.title,
-        deadline: todoData.deadline,
-        detail: todoData.detail,
-        priority: todoData.priority,
-      );
-      return "success";
-    } on FirebaseException catch (e) {
-      // TODO データ作成失敗時の処理を実装する
-      final code = () {
-        switch (e.code) {
-          case "success":
-            return "OK";
-          default:
-            return "default";
-        }
-      }();
-      return code;
-    } catch (e) {
-      rethrow;
-    }
+    User? user = await firebaseAuthDataProvider.getCurrentUser();
+    await firebaseTodoDataProvider.updateTodoDetail(
+      uid: user!.uid,
+      todoId: todoData.todoId,
+      title: todoData.title,
+      deadline: todoData.deadline,
+      detail: todoData.detail,
+      priority: todoData.priority,
+    );
+    return "success";
   }
 
   Future<TodoModel> getTodoData({
     required String todoId,
   }) async {
-    try {
-      User? user = await firebaseAuthDataProvider.getCurrentUser();
-      final res = await firebaseTodoDataProvider.getTodoDetail(
-        uid: user!.uid,
-        todoId: todoId,
-      );
-      final resTodo = res.data()!;
-      TodoModel todoModel = TodoModel(
-        todoId: todoId,
-        title: resTodo['title'],
-        deadline: formatTimestampToString(tDateTime: resTodo['deadline']),
-        priority: resTodo['priority'],
-        detail: resTodo['detail'],
-      );
+    User? user = await firebaseAuthDataProvider.getCurrentUser();
+    final res = await firebaseTodoDataProvider.getTodoDetail(
+      uid: user!.uid,
+      todoId: todoId,
+    );
+    final resTodo = res.data()!;
+    TodoModel todoModel = TodoModel(
+      todoId: todoId,
+      title: resTodo['title'],
+      deadline: formatTimestampToString(tDateTime: resTodo['deadline']),
+      priority: resTodo['priority'],
+      detail: resTodo['detail'],
+    );
 
-      return todoModel;
-    } on FirebaseException catch (e) {
-      final code = () {
-        switch (e.code) {
-          case "invalid-name":
-            return "invalid_name";
-          case "user_disabled":
-            return "user_disabled";
-          default:
-            return "unexpected_error";
-        }
-      }();
-
-      return [] as TodoModel;
-    } catch (e) {
-      rethrow;
-    }
+    return todoModel;
   }
 }

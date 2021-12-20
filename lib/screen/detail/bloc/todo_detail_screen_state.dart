@@ -23,6 +23,7 @@ class InitializeInProgressState extends TodoListScreenState {
 
 class InitializeSuccessState extends TodoListScreenState {
   final TodoModel todoDetailData;
+
   const InitializeSuccessState({
     required this.todoDetailData,
   });
@@ -95,6 +96,7 @@ class DeleteFailureState extends TodoListScreenState {
     required this.error,
     required this.stackTrace,
   });
+
   @override
   List<Object> get props => [
         error,

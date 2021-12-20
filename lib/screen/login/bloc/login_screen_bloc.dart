@@ -21,8 +21,6 @@ class LoginScreenBloc extends Bloc {
       yield InitializeInProgressState();
 
       try {
-        // TODO 初期化処理
-
         yield InitializeSuccessState();
       } catch (e, s) {
         print(e);
