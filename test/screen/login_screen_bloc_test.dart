@@ -33,9 +33,9 @@ void main() {
     _bloc.close();
   });
 
-  group('toString', () {
+  group("toString", () {
     blocTest(
-      '1. 分岐なし',
+      "1. 分岐なし",
       build: () => _bloc,
       verify: (dynamic bloc) async {
         // 期待通りの画面名がオーバーライドされていること
@@ -44,9 +44,9 @@ void main() {
     );
   });
 
-  group('OnCompletedRenderEvent', () {
+  group("OnCompletedRenderEvent", () {
     blocTest(
-      '1.画面描画正常終了',
+      "1. 画面描画正常終了",
       build: () => _bloc,
       act: (dynamic bloc) async {
         bloc.add(
@@ -60,9 +60,9 @@ void main() {
     );
   });
 
-  group('OnRequestedInitializeEvent', () {
+  group("OnRequestedInitializeEvent", () {
     blocTest(
-      '1. 正常終了する場合',
+      "1. 正常終了する場合",
       build: () => _bloc,
       act: (dynamic bloc) async {
         bloc.add(
@@ -77,7 +77,7 @@ void main() {
     );
   });
 
-  group('OnRequestedAuthenticateEvent', () {
+  group("OnRequestedAuthenticateEvent", () {
     const testEmail = "hoge@example.com";
     const testPassword = "foobar";
 
@@ -88,9 +88,9 @@ void main() {
       mockUser: testUser,
     );
 
-    group('1. 正常系', () {
+    group("1. 正常系", () {
       blocTest(
-        '1-1. 認証がOKとなる場合',
+        "1-1. 認証がOKとなる場合",
         build: () => _bloc,
         act: (dynamic bloc) async {
           when(
@@ -99,7 +99,7 @@ void main() {
                 "email",
               ),
               password: anyNamed(
-                'password',
+                "password",
               ),
             ),
           ).thenAnswer(
@@ -119,7 +119,7 @@ void main() {
         expect: () => [
           AuthenticateInProgressState(),
           const AuthenticateSuccessState(
-            result: 'success',
+            result: "success",
           ),
         ],
         verify: (dynamic bloc) async {
@@ -133,9 +133,9 @@ void main() {
       );
     });
 
-    group('2. 異常系', () {
+    group("2. 異常系", () {
       blocTest(
-        '2-1. メールアドレス誤りで認証がNGとなる場合',
+        "2-1. メールアドレス誤りで認証がNGとなる場合",
         build: () => _bloc,
         act: (dynamic bloc) async {
           when(
@@ -164,7 +164,7 @@ void main() {
         expect: () => [
           AuthenticateInProgressState(),
           const AuthenticateFailureState(
-            error: 'invalid_name',
+            error: "invalid_name",
             stackTrace: null,
           ),
         ],
@@ -180,7 +180,7 @@ void main() {
       );
 
       blocTest(
-        '2-2. 無効なユーザーによるログイン試行で認証がNGとなる場合',
+        "2-2. 無効なユーザーによるログイン試行で認証がNGとなる場合",
         build: () => _bloc,
         act: (dynamic bloc) async {
           when(
@@ -194,7 +194,7 @@ void main() {
             ),
           ).thenThrow(
             FirebaseAuthException(
-              code: "user-disabled",
+              code: "user_disabled",
             ),
           );
 
@@ -209,7 +209,7 @@ void main() {
         expect: () => [
           AuthenticateInProgressState(),
           const AuthenticateFailureState(
-            error: 'user_disabled',
+            error: "user_disabled",
             stackTrace: null,
           ),
         ],
@@ -225,7 +225,7 @@ void main() {
       );
 
       blocTest(
-        '2-3. 予期せぬ理由で認証がNGとなる場合',
+        "2-3. 予期せぬ理由で認証がNGとなる場合",
         build: () => _bloc,
         act: (dynamic bloc) async {
           when(
@@ -254,7 +254,7 @@ void main() {
         expect: () => [
           AuthenticateInProgressState(),
           const AuthenticateFailureState(
-            error: 'unexpected_error',
+            error: "unexpected_error",
             stackTrace: null,
           ),
         ],
@@ -270,7 +270,7 @@ void main() {
       );
 
       blocTest(
-        '2-4. 予期せぬエラーが発生した場合',
+        "2-4. 予期せぬエラーが発生した場合",
         build: () => _bloc,
         act: (dynamic bloc) async {
           when(
@@ -295,7 +295,7 @@ void main() {
         expect: () => [
           AuthenticateInProgressState(),
           const AuthenticateFailureState(
-            error: 'unexpected_error',
+            error: "unexpected_error",
             stackTrace: null,
           ),
         ],
